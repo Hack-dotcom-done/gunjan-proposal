@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gunjan bby, will you marry me? 💍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#ff9a9e; /* pink */
+      --bg2:#fad0c4; /* soft peach */
+      --accent:#ff4d6d;
+      --accent-2:#ffccd5;
+      --text:#2a2a2a;
+      --white:#ffffff;
+      --shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      color:var(--text);
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow:hidden;
+    }
+
+    /* Floating hearts background */
+    .heart{position:fixed; pointer-events:none; z-index:0; opacity:.7}
+    .heart svg{display:block}
+    @keyframes floatUp{
+      0%{transform:translateY(0) scale(0.9); opacity:0}
+      10%{opacity:.8}
+      100%{transform:translateY(-120vh) scale(1.2); opacity:0}
+    }
+
+    .container{
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      height:100%; width:100%;
+      padding:24px;
+      z-index:2;
+    }
+    .card{
+      background:rgba(255,255,255,.85);
+      backdrop-filter: blur(8px);
+      border-radius:28px;
+      padding:32px 28px 28px;
+      width:min(720px, 95vw);
+      box-shadow:var(--shadow);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .ribbon{
+      position:absolute; inset:auto -40px  -40px auto; transform:rotate(-12deg);
+      font-family:Sacramento, cursive; font-size:48px; color:var(--accent);
+      opacity:.15; user-select:none; pointer-events:none;
+    }
+
+    .heading{
+      font-weight:800; font-size: clamp(28px, 5vw, 48px); line-height:1.1; margin:0 0 14px;
+    }
+    .script{
+      font-family:Sacramento, cursive; font-size: clamp(36px, 7vw, 72px); color:var(--accent);
+    }
+
+    /* typewriter effect */
+    .typewrap{ display:inline-block; position:relative;}
+    .type{
+      border-right: 3px solid var(--accent);
+      white-space:nowrap; overflow:hidden; display:inline-block;
+      animation: typing 3.2s steps(30,end) 0.3s both, blink 0.9s step-end infinite;
+    }
+    @keyframes typing { from{ width:0 } to{ width:100% } }
+    @keyframes blink { 50%{ border-color: transparent } }
+
+    .buttons{display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:22px}
+    button{
+      font-weight:700; font-size:18px; border:none; border-radius:999px; padding:14px 22px; cursor:pointer;
+      transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,.15);
+      position:relative;
+    }
+    #yesBtn{background:var(--accent); color:var(--white)}
+    #yesBtn:hover{transform: translateY(-2px) scale(1.02)}
+
+    #noBtn{background:var(--white); color:var(--text)}
+    #noBtn:hover{transform: translateY(-2px) rotate(-1deg)}
+
+    .tiny-note{font-size:14px; opacity:.75; margin-top:6px}
+
+    /* Toast / prompt */
+    .toast{
+      position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(100px);
+      background:rgba(0,0,0,.8); color:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow); z-index:4;
+      opacity:0; transition: opacity .25s ease, transform .25s ease;
+      max-width:min(90vw,700px); text-align:center
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0) }
+
+    /* YES overlay */
+    .overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:5;}
+    .overlay.active{ display:flex }
+    .overlay__bg{ position:absolute; inset:0; background: radial-gradient(1200px 800px at 50% 50%, rgba(255,255,255,.95), rgba(255,255,255,.8), rgba(255,255,255,.6)); backdrop-filter: blur(6px); }
+    .overlay__content{ position:relative; text-align:center; padding:24px; max-width: 900px }
+    .big-love{ font-family:Sacramento, cursive; font-size: clamp(48px, 10vw, 120px); color:var(--accent); margin:0 0 12px; animation: pop .6s ease both }
+    .sub-love{ font-size: clamp(18px, 3.4vw, 28px); margin:0; }
+    @keyframes pop{ from{transform:scale(.6); opacity:0} to{transform:scale(1); opacity:1} }
+
+    /* Confetti */
+    .confetti{ position:fixed; width:10px; height:18px; top:-20px; left:0; opacity:0; will-change: transform, opacity; z-index:6 }
+    @keyframes fall{
+      0%{ transform:translate3d(var(--x), -20px, 0) rotate(0deg); opacity:1 }
+      100%{ transform:translate3d(var(--xEnd), 110vh, 0) rotate(720deg); opacity:0 }
+    }
+
+    /* Footer note */
+    .sig{ margin-top:22px; font-size:14px; opacity:.7 }
+    .sig b{ color:var(--accent) }
+
+    /* Make the No button able to teleport */
+    .stage{ position:relative; width:100%; min-height:160px; margin-top:8px }
+
+    @media (max-width:520px){
+      .card{ padding:26px 18px 22px }
+      .type{ border-width:2px }
+    }
+  </style>
+</head>
+<body>
+  <!-- hearts are injected by JS -->
+
+  <div class="container">
+    <div class="card" id="card">
+      <div class="ribbon">for my Gunjan ♡</div>
+
+      <h1 class="heading">
+        <span class="script">Gunjan bby,</span>
+        <br>
+        <span class="typewrap"><span class="type">will you marry me? 💍</span></span>
+      </h1>
+
+      <p class="tiny-note">(hehe you gotta choose one 😘)</p>
+
+      <div class="stage" id="stage">
+        <div class="buttons">
+          <button id="yesBtn" aria-label="Yes">Yes!</button>
+          <button id="noBtn" aria-label="No">No</button>
+        </div>
+      </div>
+
+      <div class="sig">— always yours, <b>Aryan</b> ❤️</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">baby, why don’t you wanna marry me? don’t you love your Aryan? 🥺</div>
+
+  <div class="overlay" id="yesOverlay" role="dialog" aria-modal="true">
+    <div class="overlay__bg"></div>
+    <div class="overlay__content">
+      <h2 class="big-love">Yayyyyy! I loveeee youuu too Gunjan bby!!! 💖</h2>
+      <p class="sub-love">muaaahhhh, you are my everything ✨</p>
+    </div>
+  </div>
+
+  <script>
+    // --- Floating hearts ---
+    const COLORS = [
+      '#ff4d6d','#ff8fa3','#ffccd5','#ffc6ff','#bde0fe','#caffbf'
+    ];
+    function makeHeart(x){
+      const d = document.createElement('div');
+      d.className = 'heart';
+      const size = Math.random()*28 + 12; // 12-40
+      d.style.left = (Math.random()*100) + 'vw';
+      d.style.bottom = '-60px';
+      d.style.opacity = (Math.random()*0.5 + 0.3).toFixed(2);
+      d.style.animation = `floatUp ${8 + Math.random()*8}s linear infinite`;
+      d.innerHTML = `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${COLORS[Math.floor(Math.random()*COLORS.length)]}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21s-6.716-4.61-9.192-7.086C1.514 12.62 1 11.357 1 10.03 1 7.263 3.238 5 6 5c1.657 0 3.156.84 4.06 2.12a4.999 4.999 0 0 1 4.06-2.12c2.762 0 5 2.263 5 5.03 0 1.328-.514 2.59-1.808 3.884C18.716 16.39 12 21 12 21z"/>
+        </svg>`;
+      document.body.appendChild(d);
+      // cleanup & re-spawn
+      setTimeout(()=>{ d.remove(); makeHeart(); }, 10000 + Math.random()*4000);
+    }
+    for(let i=0;i<18;i++) setTimeout(()=>makeHeart(), i*400);
+
+    // --- No button teleport ---
+    const noBtn = document.getElementById('noBtn');
+    const stage = document.getElementById('stage');
+    const toast = document.getElementById('toast');
+    let dodges = 0;
+
+    function showToast(){
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=>toast.classList.remove('show'), 2200);
+    }
+
+    function teleport(btn){
+      const rect = stage.getBoundingClientRect();
+      const bw = btn.offsetWidth; const bh = btn.offsetHeight;
+      const x = Math.random()*(rect.width - bw);
+      const y = Math.random()*(Math.max(80, rect.height - bh));
+      btn.style.position = 'absolute';
+      btn.style.left = x + 'px';
+      btn.style.top = y + 'px';
+    }
+
+    function dodge(){
+      teleport(noBtn);
+      dodges++;
+      showToast();
+      // make it slightly smaller each dodge (funny!)
+      const scale = Math.max(0.8, 1 - dodges*0.03);
+      noBtn.style.transform = `scale(${scale})`;
+    }
+
+    // trigger dodge on hover, click, focus, or touch
+    ['mouseenter','click','focus','touchstart','pointerdown'].forEach(evt=>{
+      noBtn.addEventListener(evt, (e)=>{
+        e.preventDefault();
+        dodge();
+      }, {passive:false});
+    });
+
+    // --- YES overlay + confetti ---
+    const yesBtn = document.getElementById('yesBtn');
+    const overlay = document.getElementById('yesOverlay');
+
+    yesBtn.addEventListener('click', ()=>{
+      overlay.classList.add('active');
+      launchConfetti(140);
+      // gently hide the card background
+      document.getElementById('card').style.opacity = .95;
+    });
+
+    function launchConfetti(n=120){
+      for(let i=0;i<n;i++){
+        const c = document.createElement('div');
+        c.className='confetti';
+        const hue = Math.floor(Math.random()*360);
+        c.style.background = `hsl(${hue} 90% 60%)`;
+        c.style.left = Math.random()*100 + 'vw';
+        const x = (Math.random()*100) + 'vw';
+        const xEnd = (Math.random()*100) + 'vw';
+        c.style.setProperty('--x', x);
+        c.style.setProperty('--xEnd', xEnd);
+        const dur = (6 + Math.random()*4).toFixed(2) + 's';
+        c.style.animation = `fall ${dur} ease-in forwards`;
+        c.style.opacity = 1;
+        c.style.transform = `translate3d(${x}, -20px, 0)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 12000);
+      }
+    }
+
+    // Accessibility: if user tries using keyboard to select No, still dodges
+    noBtn.addEventListener('keydown', (e)=>{
+      if(['Enter',' '].includes(e.key)){
+        e.preventDefault();
+        dodge();
+      }
+    });
+
+    // offer one mercy click after many dodges 😉 (but still intercept with toast and move)
+    setTimeout(()=>{
+      if(dodges>8) showToast();
+    }, 12000);
+  </script>
+</body>
+</html>
